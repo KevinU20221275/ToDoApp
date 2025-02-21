@@ -3,22 +3,24 @@ import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 export function NavBar(){
-    const [darkMode, setDarkMode] = useState(window.localStorage.getItem('darkMode') || false)
+    const [darkMode, setDarkMode] = useState<boolean>(false)
     
     useEffect(() => {
-        const body = document.querySelector('body')
-        if (window.localStorage.getItem('darkMode') === 'true'){
-            body?.classList.add('dark')
-        }
-        else {
-            body?.classList.remove('dark')
+        const savedDarkMode = window.localStorage.getItem('darkMode')
+        if (savedDarkMode === 'true'){
+            setDarkMode(true)
+            document.querySelector('body')?.classList.add('dark')
+        } else {
+            setDarkMode(false)
+            document.querySelector('body')?.classList.remove('dark')
         }
     }, [])
 
     const toggleTheme = () => {
         const body = document.querySelector('body')
         body?.classList.toggle('dark')
-        window.localStorage.setItem('darkMode', body?.classList.contains('dark')? 'true' : 'false')
+        const newDarkMode = body?.classList.contains('dark') ? 'true' : 'false';
+        window.localStorage.setItem('darkMode', newDarkMode)
         setDarkMode(!darkMode)
     }
     

@@ -14,6 +14,13 @@ export interface ModalFormProps{
     isOpen: boolean
 }
 
+export interface taskCardProps {
+    task: Task
+    handleEdit: (id: number) => void 
+    handleDelete: (id: number) => void
+}
+
+
 
 export interface User {
     id : number

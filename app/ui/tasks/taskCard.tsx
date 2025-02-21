@@ -1,11 +1,6 @@
-import { Task } from "@/app/lib/definitions";
+'use client'
 import { useState } from "react";
-
-interface taskCardProps {
-    task: Task
-    handleEdit: (id: number) => void 
-    handleDelete: (id: number) => void
-}
+import { taskCardProps } from "@/app/lib/definitions";
 
 export function TaskCard({task, handleEdit, handleDelete} : taskCardProps){
     const [fade, setFade] = useState<string>('fade-in')
