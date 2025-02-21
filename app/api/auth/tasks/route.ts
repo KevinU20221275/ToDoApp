@@ -11,7 +11,7 @@ export async function GET(){
     try {
         const tasks = await sql<Task[]>`SELECT * FROM tasks WHERE userId = ${user.id}`
 
-        return NextResponse.json(tasks, {status: 200})
+        return NextResponse.json(tasks.rows, {status: 200})
     } catch (error) {
         return NextResponse.json({message: `Task not found ${error}`}, {status: 404})
     }
@@ -28,10 +28,16 @@ export async function POST(req: Request){
 
     try {
         const newTask = await sql<Task>`INSERT INTO tasks (description, done, userId) 
-            VALUES ${data.description}, ${data.done}, ${user.id}`
+            VALUES (${data.description}, ${data.done}, ${user.id}) RETURNING *`
 
         if (newTask){
-            return NextResponse.json(newTask, {status : 201})
+            const responseData = {
+                id: newTask.rows[0].id,
+                description: newTask.rows[0].description,
+                done: newTask.rows[0].done,
+                userId: newTask.rows[0].userId,
+            }
+            return NextResponse.json(responseData, {status : 201})
         } else {
             return NextResponse.json({message: 'Task not added'}, {status : 400})
         }
@@ -60,6 +66,7 @@ export async function DELETE(req: Request){
 
 export async function PUT(req: Request) {
     const data = await req.json()
+    console.log(data)
 
     try {
         await sql`UPDATE tasks 

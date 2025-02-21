@@ -18,7 +18,7 @@ export const authConfig = {
 
                 const data = await sql<User>`SELECT * FROM Users WHERE username = ${credentials.username} LIMIT 1`
 
-                if (!data) return null;
+                if (data.rows.length <= 0) return null;
                 const user : User = data.rows[0]
 
                 const valid = await bcrypt.compare(credentials?.password, user.password)
