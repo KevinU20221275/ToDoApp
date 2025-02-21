@@ -1,6 +1,7 @@
 import Credentials from "next-auth/providers/credentials";
-import { db } from "@/app/lib/prisma";
 import bcrypt from 'bcrypt'
+import { sql } from "@vercel/postgres";
+import { User } from "./definitions";
 
 export const authConfig = {
     providers: [
@@ -15,13 +16,10 @@ export const authConfig = {
                     throw new Error('Username and password are required')
                 }
 
-                const user = await db.user.findUnique({
-                    where: {
-                        username: credentials.username
-                    }
-                })
+                const data = await sql<User>`SELECT * FROM Users WHERE username = ${credentials.username} LIMIT 1`
 
-                if (!user) return null;
+                if (!data) return null;
+                const user : User = data.rows[0]
 
                 const valid = await bcrypt.compare(credentials?.password, user.password)
 
