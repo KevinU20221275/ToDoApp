@@ -10,7 +10,6 @@ export async function POST(request:NextRequest){
         const userFound = await sql<User>`SELECT * FROM users WHERE username = ${data.username} LIMIT 1`;
 
         if (userFound.rows.length > 0) {
-            console.log('user exists')
             return NextResponse.json({error: "User already exists"},{status:400})
         }
     
