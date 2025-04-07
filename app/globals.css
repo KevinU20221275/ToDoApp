@@ -22,7 +22,7 @@ dialog {
 }
 
 .fade-out {
-    animation: fadeCard 1s ease-in-out;
+    animation: fadeCard 1s ease-in-out forwards;
 }
 
 @keyframes fadeCard {
@@ -43,5 +43,5 @@ dialog {
 }
 
 .fade-in {
-    animation: fadeInSlide 0.5s ease-in-out;
+    animation: fadeInSlide 0.4s ease-in-out;
 }
