@@ -1,32 +1,55 @@
 'use client'
+
 import {useForm} from 'react-hook-form'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Loading } from '../ui/Loading';
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { registerUser } from '../services/users';
+import toast from 'react-hot-toast';
 
 export default function Home() {
   const {register, handleSubmit, formState: {errors}} = useForm();
+  const [resErrors, setResErrors] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
 
   const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true)
 
     if(data.password !== data.confirmPassword){
-      return alert("Passwords do not match")
+      toast.error("Passwords do not match")
+      setResErrors('Passwords do not match')
+      setIsLoading(false)
+      return
     }
-     const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+
+    try {
+      await registerUser(data.username, data.password)
+
+      const res = await signIn('credentials',{
         username: data.username,
-        password: data.password
+        password: data.password,
+        redirect: false
       })
-    })
-    
-    if(res.ok){
-      router.push('/')
+      
+      if (res?.error){
+        toast.error("This didn't work.")
+        setResErrors('An error has occurred')
+      } else {
+        toast.success('User created successfully, redirecting...')
+        router.push('/tasks')
+        router.refresh()
+      }
+    } catch (error : any) {
+      toast.error("This didn't work.")
+      setResErrors(error.message)
+    } finally {
+      setIsLoading(false)
     }
   })
+
   return (
     <>
       <main>
@@ -66,8 +89,9 @@ export default function Home() {
                 }
               }))} className='w-full bg-[#ddd] py-3 px-2 rounded-md outline-[#ccc]' placeholder='******' />
             </fieldset>
-            <button className='bg-[#ccc] hover:bg-[#aaa] py-4 rounded-md mt-2'>Login</button>
+            {isLoading ? <Loading/> : <button className='bg-[#ccc] hover:bg-[#aaa] py-4 rounded-md mt-2'>Register</button>}
           </form>
+          <p className='text-red-500'>{resErrors}</p>
           <Link href={'/'} className='text-[#777] hover:underline'>You alredy have acount</Link>
         </section>
       </main>
