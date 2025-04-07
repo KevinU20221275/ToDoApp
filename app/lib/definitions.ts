@@ -1,7 +1,7 @@
 export interface Task {
-    id: number;
-    description: string;
-    done: boolean;
+    Id: number;
+    Description: string;
+    Done: number;
     userId: number;
 }
 
@@ -20,10 +20,15 @@ export interface taskCardProps {
     handleDelete: (id: number) => void
 }
 
-
-
 export interface User {
     id : number
     username : string
     password : string
+}
+
+export interface TaskListProps {
+    tasks: Task[];
+    handleEdit: (id: number) => void;
+    handleDelete: (id: number) => void;
+    loading: boolean;
 }
