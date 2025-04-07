@@ -3,9 +3,9 @@ import { Task } from "../lib/definitions";
 
 export function useTaskForm(taskEdit : Task | null){
     const [task, setTask ] = useState<Task>({
-        id: 0,
-        description: '',
-        done: false,
+        Id: 0,
+        Description: '',
+        Done: 0,
         userId: 0,
     })
 
@@ -21,16 +21,16 @@ export function useTaskForm(taskEdit : Task | null){
 
     const resetTaskState = () => {
         setTask({
-            id: 0,
-            description: '',
-            done: false,
+            Id: 0,
+            Description: '',
+            Done: 0,
             userId: 0,
         })
     }
 
     const sendTask = () => {
         const taskData = task
-        if (!task.description) {
+        if (!task.Description) {
             setErrors({...errors, description: 'Description is required'})
             return
         }
@@ -44,9 +44,9 @@ export function useTaskForm(taskEdit : Task | null){
         const value = target.value.toString()
     
         const taskToEdit : Task = {
-            id: Number(task?.id),
-            description: value,
-            done: task.done,
+            Id: Number(task?.Id),
+            Description: value,
+            Done: task.Done,
             userId: Number(task?.userId),
         }
             
@@ -60,9 +60,9 @@ export function useTaskForm(taskEdit : Task | null){
         const value = target.value
           
         const taskToEdit : Task = {
-            id: Number(task?.id),
-            description: task?.description,
-            done: value === 'false' ? false : true,
+            Id: Number(task?.Id),
+            Description: task?.Description,
+            Done: value === 'false' ? 0 : 1,
             userId: Number(task?.userId),
         }
         
