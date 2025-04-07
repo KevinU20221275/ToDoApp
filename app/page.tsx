@@ -1,14 +1,21 @@
 'use client'
+
 import {useForm} from 'react-hook-form'
 import {signIn} from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useState } from 'react'
+import { Loading } from './ui/Loading'
+import toast from 'react-hot-toast'
 
 export default function Home() {
   const {register, handleSubmit, formState: {errors}} = useForm()
+  const [resErrors, setResErrors] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true)
     const res = await signIn('credentials',{
       username: data.username,
       password: data.password,
@@ -16,13 +23,18 @@ export default function Home() {
     })
 
     if (res?.error){
-      alert("Usuario o Contraseña incorrecta")
-      return
+      toast.error('Username or password incorrect')
+      setResErrors('Username or password incorrect')
+      setIsLoading(false)
     } else {
+      toast.success('Login successfully, redirecting...')
+      setIsLoading(false)
       router.push('/tasks')
       router.refresh()
     }
   })
+
+
 
   return (
     <main>
@@ -55,8 +67,9 @@ export default function Home() {
               errors.password && <p className="text-red-500">{errors.password.message?.toString()}</p>
             }
           </fieldset>
-          <button className='bg-[#ccc] hover:bg-[#aaa] py-4 rounded-md mt-2'>Login</button>
+          {isLoading ? <Loading/> : <button className='bg-[#ccc] hover:bg-[#aaa] py-4 rounded-md mt-2'>Login</button>}
         </form>
+        <p className='text-red-500'>{resErrors}</p>
         <Link href={'/register'} className='text-[#777] hover:underline'>You dont have acount?</Link>
       </section>
     </main>
