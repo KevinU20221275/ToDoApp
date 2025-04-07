@@ -42,9 +42,11 @@ export default function Home() {
         router.push('/tasks')
         router.refresh()
       }
-    } catch (error : any) {
-      toast.error("This didn't work.")
-      setResErrors(error.message)
+    } catch (error : unknown) {
+      if (error instanceof Error) {
+        toast.error("This didn't work.")
+        setResErrors(error.message)
+      }
     } finally {
       setIsLoading(false)
     }
